@@ -1,3 +1,3 @@
 # interconvert-sRGB-and-linear-RGB-HSY
-## [**index.xhtml**](https://yoshi-hikogori.github.io/interconvert-sRGB-and-linear-RGB-HSY/)
-* 1.0.0 正式版完成・公開！
+## [**Interconvert-sRGB-and-Linear-RGB-and-HSY/**](https://github.com/yoshi-hikogori/Interconvert-sRGB-and-Linear-RGB-and-HSY/)
+* 新しいレポジトリに移転しました (The repository has moved.) → [**Interconvert-sRGB-and-Linear-RGB-and-HSY/**](https://github.com/yoshi-hikogori/Interconvert-sRGB-and-Linear-RGB-and-HSY/)
