@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja" dir="ltr">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>sRGB 色空間の16進カラーコード・RGB値、線形 RGB 色空間の RGB 値、配色属性 HSYの相互変換.xhtml</title>
+	<meta name="description" content="文書内容の説明" />
+	
+	<style>
+/*<![CDATA[*/
+/* ここから　リセット CSS */
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+
+/* class属性を持つul、ol要素のデフォルトのpaddingを削除、リストスタイルを削除 */
+ul, ol {
+	padding: 0;
+	list-style: none;
+}
+ul:not([class]), ol:not([class]) {
+	display: block;
+	list-style: disc outside none;
+	padding: 0 0 0 40px;
+}
+ol:not([class]) {
+	list-style-type: decimal;
+}
+
+/* デフォルトのmarginを削除 */
+body, h1, h2, h3, h4, p, ul, ol,
+ li, figure, figcaption, blockquote, dl, dd, fieldset {
+	margin: 0;
+}
+ul:not([class]), ol:not([class]) {
+	margin: 1em 0;
+}
+
+:root {
+	scroll-behavior: smooth;
+}
+
+body {
+	text-rendering: optimizeSpeed;
+	line-height: 1.5;
+}
+
+/* class を持たないA要素はデフォルトのスタイルを取得 */
+a:not([class]) {
+	 text-decoration-skip-ink: auto;
+}
+
+img {
+  vertical-align: top;
+}
+
+input, button, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  background-color: inherit;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* リセット CSS　ここまで */
+
+body {
+	min-width: 100%;
+	overflow-wrap: break-word;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+	font-family: "KokoroRegular", "NotoSerifCJKjpRegular", sans-serif, system-ui;
+	text-rendering: geometricPrecision;
+	color: #ffffff;
+	text-shadow: 0 0.25px 0 black, calc(17.5px / 99) calc(17.5px / 99) 0 black, 0.25px 0 0 black, calc(17.5px / 99) calc(-17.5px / 99) 0 black,
+	 0 -0.25px 0 black, calc(-17.5px / 99) calc(-17.5px / 99) 0 black, -0.25px 0 0 black, calc(-17.5px / 99) calc(17.5px / 99) 0 black;
+	background-color: #282828;
+}
+@supports not ((-webkit-text-size-adjust: 100%) or (text-size-adjust: 100%)) {
+	body {
+		-webkit-text-size-adjust: none;
+		text-size-adjust: none;
+	}
+}
+
+/*]]>*/
+	</style>
+</head>
+
+<body>
+	<header id="header" class="Header">
+		<p class="Header_text">1.0.3 版、最終更新：</p>
+	</header>
+		<main class="Main"><h1 class="Main_h1">sRGB 色空間の16進カラーコード・RGB値、線形 RGB 色空間の RGB 値、配色属性 HSYの相互変換.xhtml</h1>
+		<p class="Main_beginning">各値を直接またはスライダーでその割合を入力して、<!--
+		-->入力された値を満たす他の値を返します</p>
+		<section id="section01" class="MainSection"><h2 class="MainSection_h2">文書内容1</h2>
+			<p id="p1" class="MainSection_par">ここに説明が入る</p>
+		</section>
+	</main>
+	<form id="form" name="form">
+		<fieldset><legend accesskey="F"><h2>入力欄 (<kbd><kbd class="underline-text">F</kbd></kbd>)</h2></legend>
+			<fieldset><legend accesskey="S"><h3>入力の反映形態 (<kbd><kbd class="underline-text">S</kbd></kbd>)</h3></legend>
+				<p><label><input id="syncGovernorBox" name="syncGovernorBox" type="checkbox" checked="checked" />反映契機設定 - 入力値の反映を入力欄の変更中に同期するか(チェックを外していると入力完了時に一括で反映)</label></p>
+			</fieldset>
+			<fieldset><legend accesskey="C"><h3>カラーコード（sRGB 色空間） (<kbd><kbd class="underline-text">C</kbd></kbd>)</h3></legend>
+				<p><input id="colorPickInput" name="colorPickInput" type="color" value="#bcbcbc" /></p>
+				<p><label><input id="colorCodeInput" name="colorCodeInput" type="text" value="BCBCBC" pattern="[\s\S]*[#＃]*[0-9a-fA-F０-９ａ-ｆＡ-Ｆ]{3,6}[\s\S]*" />(入力範囲： 000000–FFFFFF または 000–FFF の16進数、先頭の#の有無は自動で補完します)</label></p>
+				<p><label><input id="caseGovernorBox" name="caseGovernorBox" type="checkbox" />letter case設定 - カラーコードを大文字・小文字のいずれかに統一（チェックで小文字）</label></p>
+				<p><label><input id="prefixGovernorBox" name="prefixGovernorBox" type="checkbox" />接頭辞設定 - 出力するカラーコードに接頭辞｢#｣を付けるか（チェックで付ける）</label></p>
+			</fieldset>
+			<fieldset><legend accesskey="S"><h3>RGB 各チャンネルの明度 (sRGB 色空間、入力範囲： 0–255 の数値) (<kbd><kbd class="underline-text">S</kbd></kbd>)</h3></legend>
+				<p>
+					<label>R: <input id="RNumInput" name='RNumInput' type="number" value="188" max="255" step="any" /></label>
+					<input id="RRangeInput" name="RRangeInput" type="range" value="0.7372549019607844" max="1" step="any" />
+					<input id="RNormalNumInput" name="RNormalNumInput" type="number" value="0.7372549019607844" max="1" step="any" />
+				</p>
+				<p>
+					<label>G: <input id="GNumInput" name="GNumInput" type="number" value="188" max="255" step="any" /></label>
+					<input id="GRangeInput" name="GRangeInput" type="range" value="0.7372549019607844" max="1" step="any" />
+					<input id="GNormalNumInput" name="GNormalNumInput" type="number" value="0.7372549019607844" max="1" step="any" />
+				</p>
+				<p>
+					<label>B: <input id="BNumInput" name="BNumInput" type="number" value="188" max="255" step="any" /></label>
+					<input id="BRangeInput" name="BRangeInput" type="range" value="0.7372549019607844" max="1" step="any" />
+					<input id="BNormalNumInput" name="BNormalNumInput" type="number" value="0.7372549019607844" max="1" step="any" />
+				</p>
+			</fieldset>
+			<fieldset><legend accesskey="L"><h3>線形 RGB 各チャンネルの明度 (線形 RGB 色空間、入力範囲： 0–255 の数値) (<kbd><kbd class="underline-text">L</kbd></kbd>)</h3></legend>
+				<p>
+					<label>R: <input id="linearRNumInput" name='linearRNumInput' type="number" value="128.23604679830493" max="255" step="any" /></label>
+					<input id="linearRRangeInput" name="linearRRangeInput" type="range" value="0.5028864580325684" max="1" step="any" />
+					<input id="linearRNormalNumInput" name="linearRNormalNumInput" type="number" value="0.50288645803256844" max="1" step="any" />
+				</p>
+				<p>
+					<label>G: <input id="linearGNumInput" name="linearGNumInput" type="number" value="128.23604679830493" max="255" step="any" /></label>
+					<input id="linearGRangeInput" name="linearGRangeInput" type="range" value="0.5028864580325684" max="1" step="any" />
+					<input id="linearGNormalNumInput" name="linearGNormalNumInput" type="number" value="0.5028864580325684" max="1" step="any" />
+				</p>
+				<p>
+					<label>B: <input id="linearBNumInput" name="linearBNumInput" type="number" value="128.23604679830493" max="255" step="any" /></label>
+					<input id="linearBRangeInput" name="linearBRangeInput" type="range" value="0.5028864580325684" max="1" step="any" />
+					<input id="linearBNormalNumInput" name="linearBNormalNumInput" type="number" value="0.5028864580325684" max="1" step="any" />
+				</p>
+			</fieldset>
+			<fieldset>
+				<legend accesskey="M"><h3>色相 H、飽和度 S、相対輝度 Y（線形 RGB 色空間） (<kbd><kbd class="underline-text">M</kbd></kbd>)</h3></legend>
+				<p>
+					<label>H: <input id="degHNumInput" name="degHNumInput" type="number" value="" max="360" step="any" placeholder="未定義" /></label>
+					<input id="HRangeInput" name="HRangeInput" type="range" value="1" max="1" step="any" />
+					<input id="HNormalNumInput" name="HNormalNumInput" type="number" value="" max="1" step="any" placeholder="未定義" />
+				</p>
+				<p>
+					S: <input id="SRangeInput" name="SRangeInput" type="range" value="0" max="1" step="any" />
+					<input id="SNumInput" name="SNumInput" type="number" value="0" max="1" step="any" />
+				</p>
+				<p>
+					Y: <input id="YRangeInput" name="YRangeInput" type="range" value="0.5028864580325684" max="1" step="any" />
+					<input id="YNumInput" name="YNumInput" type="number" value="0.5028864580325684" max="1" step="any" />
+				</p>
+			</fieldset>
+			<p><input type="submit" id="formSubmit" name="formSubmit" form="form" value="入力値を反映" /></p>
+		</fieldset>
+	</form>
+	<footer>
+		<p><small>© 2020–2021 Yoshi Hikogori</small></p>
+		<p><small><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a> に基づいて、その範囲に於いて個別の許し無しにこの文書を用いる事を許します。<!--
+			-->この文書について、用いる事によるいかなる損ないや内容の確度に対して、係る権利者は責任を負いません。
+		</small></p>
+	</footer>
+	
+	<script>
+/*<![CDATA[*/
+(()=>{'use strict';
+globalThis.addEventListener('error', (errorEvent, {message, source, lineno, colno, error, stopPropagation} = errorEvent)=>{
+	globalThis.alert(`${lineno} 行 ${colno} 列, ${error}\n"${message}"\n${source}`);
+}, {passive: true});
+})();
+(()=>{'use strict';
+document.body.getElementsByClassName('Header_text')[0].textContent += new Date(document.lastModified).toLocaleString();
+})();
+(()=>{'use strict';
+
+const Kr = 0.21263900587151,
+Kg = 0.71516867876776,
+Kb = 0.07219231536073,
+form = document.forms.form,
+syncGovernorBox = form.elements.syncGovernorBox,
+colorPickInput = form.elements.colorPickInput,
+colorCodeInput = form.elements.colorCodeInput,
+caseGovernorBox = form.elements.caseGovernorBox,
+prefixGovernorBox = form.elements.prefixGovernorBox,
+RNumInput = form.elements.RNumInput,
+RRangeInput = form.elements.RRangeInput,
+RNormalNumInput = form.elements.RNormalNumInput,
+GNumInput = form.elements.GNumInput,
+GRangeInput = form.elements.GRangeInput,
+GNormalNumInput = form.elements.GNormalNumInput,
+BNumInput = form.elements.BNumInput,
+BRangeInput = form.elements.BRangeInput,
+BNormalNumInput = form.elements.BNormalNumInput,
+linearRNumInput = form.elements.linearRNumInput,
+linearRRangeInput = form.elements.linearRRangeInput,
+linearRNormalNumInput = form.elements.linearRNormalNumInput,
+linearGNumInput = form.elements.linearGNumInput,
+linearGRangeInput = form.elements.linearGRangeInput,
+linearGNormalNumInput = form.elements.linearGNormalNumInput,
+linearBNumInput = form.elements.linearBNumInput,
+linearBRangeInput = form.elements.linearBRangeInput,
+linearBNormalNumInput = form.elements.linearBNormalNumInput,
+degHNumInput = form.elements.degHNumInput,
+HRangeInput = form.elements.HRangeInput,
+HNormalNumInput = form.elements.HNormalNumInput,
+SRangeInput = form.elements.SRangeInput,
+SNumInput = form.elements.SNumInput,
+YRangeInput = form.elements.YRangeInput,
+YNumInput = form.elements.YNumInput,
+syncCouldListeners = new Map(),
+eventOptions = {passive: true},
+addAsyncListener = (target, listener, type = 'input')=>{
+	target.addEventListener(type, listener, eventOptions);
+},
+addSyncCouldListener = (target, listener, type = 'input')=>{
+	target.addEventListener(type, listener, eventOptions);
+	syncCouldListeners.set(target, [type, listener]);
+},
+toggleSyncMode = e=>{
+	shouldSync = syncGovernorBox.checked;
+	if(shouldSync === true) {
+		for(const [target, [type, listener]] of syncCouldListeners) {
+			target.addEventListener(type, listener, eventOptions);
+		}
+		return undefined;
+	}
+	for(const [target, [type, listener]] of syncCouldListeners) {
+		target.removeEventListener(type, listener, eventOptions);
+	}
+},
+colorPickInterfaces = e=>{
+	combinedHexCode = colorPickInput.value.slice(1);
+	colorCodeHexValue = +`0x${combinedHexCode}`;
+	degHHasPriority = false;
+	if(outputsLowerCase === false) {
+		if(prefixesColorCode === false) return colorCodeInput.value = combinedHexCode.toUpperCase();
+		return colorCodeInput.value = `#${combinedHexCode.toUpperCase()}`;
+	}
+	if(prefixesColorCode === false) return colorCodeInput.value = combinedHexCode;
+	colorCodeInput.value = `#${combinedHexCode}`;
+},
+colorCodeInterfaces = e=>{
+	if(colorCodeInput.checkValidity() === false) return undefined;
+	combinedHexCode = /(?<=#*|＃*)([0-9a-fA-F０-９ａ-ｆＡ-Ｆ]{3,6})/.exec(colorCodeInput.value)[1].replace(
+		/[０-９ａ-ｆＡ-Ｆ]/g,
+		(s)=> String.fromCharCode(s.charCodeAt(0) - 65248)
+	);
+	degHHasPriority = false;
+	if(combinedHexCode.length === 6) {
+		colorPickInput.value = `#${combinedHexCode}`;
+		colorCodeHexValue = +`0x${combinedHexCode}`;
+		separatedHexCode = [
+			colorCodeHexValue>>>16,
+			colorCodeHexValue>>>8 & 0x00ff,
+			colorCodeHexValue & 0x0000ff
+		];
+		return undefined;
+	}
+	separatedHexCode = [
+		`${combinedHexCode[0]}${combinedHexCode[0]}`,
+		`${combinedHexCode[1]}${combinedHexCode[1]}`,
+		`${combinedHexCode[2]}${combinedHexCode[2]}`
+	];
+	colorPickInput.value = `#${separatedHexCode[0]}${separatedHexCode[1]}${separatedHexCode[2]}`;
+	separatedHexCode = [
+		+`0x${separatedHexCode[0]}`,
+		+`0x${separatedHexCode[1]}`,
+		+`0x${separatedHexCode[2]}`
+	];
+	colorCodeHexValue = (separatedHexCode[0]<<16) + (separatedHexCode[1]<<8) + separatedHexCode[2];
+},
+toggleCaseMode = e=>{
+	outputsLowerCase = caseGovernorBox.checked;
+	if(outputsLowerCase) return colorCodeInput.value = colorCodeInput.value.toLowerCase();
+	colorCodeInput.value = colorCodeInput.value.toUpperCase();
+},
+togglePrefixMode = e=>{
+	prefixesColorCode = prefixGovernorBox.checked;
+	if(prefixesColorCode) return colorCodeInput.value = `#${colorCodeInput.value}`;
+	colorCodeInput.value = colorCodeInput.value.slice(1);
+},
+RNumInterfaces = e=>{
+	if(RNumInput.value === '' || RNumInput.checkValidity() === false) return undefined;
+	Rs = RNumInput.valueAsNumber;
+	RsNormal = Rs/255;
+	RRangeInput.value = RNormalNumInput.value = RsNormal;
+	degHHasPriority = false;
+},
+RRangeInterfaces = e=>{
+	if(RRangeInput.checkValidity() === false) return undefined;
+	RsNormal = RRangeInput.valueAsNumber;
+	Rs = 255*RsNormal;
+	RNumInput.value = Rs;
+	RNormalNumInput.value = RsNormal;
+	degHHasPriority = false;
+},
+RNormalInterfaces = e=>{
+	if(RNormalNumInput.value === '' || RNormalNumInput.checkValidity() === false) return undefined;
+	RsNormal = RNormalNumInput.valueAsNumber;
+	Rs = 255*RsNormal;
+	RNumInput.value = Rs;
+	RRangeInput.value = RsNormal;
+	degHHasPriority = false;
+},
+GNumInterfaces = e=>{
+	if(GNumInput.value === '' || GNumInput.checkValidity() === false) return undefined;
+	Gs = GNumInput.valueAsNumber;
+	GsNormal = Gs/255;
+	GRangeInput.value = GNormalNumInput.value = GsNormal;
+	degHHasPriority = false;
+},
+GRangeInterfaces = e=>{
+	if(GRangeInput.checkValidity() === false) return undefined;
+	GsNormal = GRangeInput.valueAsNumber;
+	Gs = 255*GsNormal;
+	GNumInput.value = Gs;
+	GNormalNumInput.value = GsNormal;
+	degHHasPriority = false;
+},
+GNormalInterfaces = e=>{
+	if(GNormalNumInput.value === '' || GNormalNumInput.checkValidity() === false) return undefined;
+	GsNormal = GNormalNumInput.valueAsNumber;
+	Gs = 255*GsNormal;
+	GNumInput.value = Gs;
+	GRangeInput.value = GsNormal;
+	degHHasPriority = false;
+},
+BNumInterfaces = e=>{
+	if(BNumInput.value === '' || BNumInput.checkValidity() === false) return undefined;
+	Bs = BNumInput.valueAsNumber;
+	BsNormal = Bs/255;
+	BRangeInput.value = BNormalNumInput.value = BsNormal;
+	degHHasPriority = false;
+},
+BRangeInterfaces = e=>{
+	if(BRangeInput.checkValidity() === false) return undefined;
+	BsNormal = BRangeInput.valueAsNumber;
+	Bs = 255*BsNormal;
+	BNumInput.value = Bs;
+	BNormalNumInput.value = BsNormal;
+	degHHasPriority = false;
+},
+BNormalInterfaces = e=>{
+	if(BNormalNumInput.value === '' || BNormalNumInput.checkValidity() === false) return undefined;
+	BsNormal = BNormalNumInput.valueAsNumber;
+	Bs = 255*BsNormal;
+	BNumInput.value = Bs;
+	BRangeInput.value = BsNormal;
+	degHHasPriority = false;
+},
+linearRNumInterfaces = e=>{
+	if(linearRNumInput.value === '' || linearRNumInput.checkValidity() === false) return undefined;
+	linearR = linearRNumInput.valueAsNumber;
+	linearRNormal = linearR/255;
+	linearRRangeInput.value = linearRNormalNumInput.value = linearRNormal;
+	degHHasPriority = false;
+},
+linearRRangeInterfaces = e=>{
+	if(linearRRangeInput.checkValidity() === false) return undefined;
+	linearRNormal = linearRRangeInput.valueAsNumber;
+	linearR = 255*linearRNormal;
+	linearRNumInput.value = linearR;
+	linearRNormalNumInput.value = linearRNormal;
+	degHHasPriority = false;
+},
+linearRNormalInterfaces = e=>{
+	if(linearRNormalNumInput.value === '' || linearRNormalNumInput.checkValidity() === false) return undefined;
+	linearRNormal = linearRNormalNumInput.valueAsNumber;
+	linearR = 255*linearRNormal;
+	linearRNumInput.value = linearR;
+	linearRRangeInput.value = linearRNormal;
+	degHHasPriority = false;
+},
+linearGNumInterfaces = e=>{
+	if(linearGNumInput.value === '' || linearGNumInput.checkValidity() === false) return undefined;
+	linearG = linearGNumInput.valueAsNumber;
+	linearGNormal = linearG/255;
+	linearGRangeInput.value = linearGNormalNumInput.value = linearGNormal;
+	degHHasPriority = false;
+},
+linearGRangeInterfaces = e=>{
+	if(linearGRangeInput.checkValidity() === false) return undefined;
+	linearGNormal = linearGRangeInput.valueAsNumber;
+	linearG = 255*linearGNormal;
+	linearGNumInput.value = linearG;
+	linearGNormalNumInput.value = linearGNormal;
+	degHHasPriority = false;
+},
+linearGNormalInterfaces = e=>{
+	if(linearGNormalNumInput.value === '' || linearGNormalNumInput.checkValidity() === false) return undefined;
+	linearGNormal = linearGNormalNumInput.valueAsNumber;
+	linearG = 255*linearGNormal;
+	linearGNumInput.value = linearG;
+	linearGRangeInput.value = linearGNormal;
+	degHHasPriority = false;
+},
+linearBNumInterfaces = e=>{
+	if(linearBNumInput.value === '' || linearBNumInput.checkValidity() === false) return undefined;
+	linearB = linearBNumInput.valueAsNumber;
+	linearBNormal = linearB/255;
+	linearBRangeInput.value = linearBNormalNumInput.value = linearBNormal;
+	degHHasPriority = false;
+},
+linearBRangeInterfaces = e=>{
+	if(linearBRangeInput.checkValidity() === false) return undefined;
+	linearBNormal = linearBRangeInput.valueAsNumber;
+	linearB = 255*linearBNormal;
+	linearBNumInput.value = linearB;
+	linearBNormalNumInput.value = linearBNormal;
+	degHHasPriority = false;
+},
+linearBNormalInterfaces = e=>{
+	if(linearBNormalNumInput.value === '' || linearBNormalNumInput.checkValidity() === false) return undefined;
+	linearBNormal = linearBNormalNumInput.valueAsNumber;
+	linearB = 255*linearBNormal;
+	linearBNumInput.value = linearB;
+	linearBRangeInput.value = linearBNormal;
+	degHHasPriority = false;
+},
+degHInterfaces = e=>{
+	if(degHNumInput.checkValidity() === false) return undefined;
+	degHHasPriority = true;
+	degH = degHNumInput.valueAsNumber;
+	if(degH === 360 || degHNumInput.value === '') {
+		H = degH = null;
+		HRangeInput.value = 1;
+		return degHNumInput.value = HNormalNumInput.value = '';
+	}
+	HRangeInput.value = HNormalNumInput.value = H = degH/360;
+},
+HRangeInterfaces = e=>{
+	if(HRangeInput.checkValidity() === false) return undefined;
+	degHHasPriority = false;
+	H = HRangeInput.valueAsNumber;
+	if(H === 1) {
+		H = degH = null;
+		return degHNumInput.value = HNormalNumInput.value = '';
+	}
+	degH = 360*H;
+	degHNumInput.value = degH;
+	HNormalNumInput.value = H;
+},
+HNormalInterfaces = e=>{
+	if(HNormalNumInput.checkValidity() === false) return undefined;
+	degHHasPriority = false;
+	HRangeInput.value = H = HNormalNumInput.valueAsNumber;
+	if(H === 1 || HNormalNumInput.value === '') {
+		H = degH = null;
+		return degHNumInput.value = HNormalNumInput.value = '';
+	}
+	degHNumInput.value = degH = 360*H;
+},
+SRangeInterfaces = e=>{
+	if(SRangeInput.checkValidity() === false) return undefined;
+	S = SRangeInput.valueAsNumber;
+	SNumInput.value = S;
+},
+SNormalInterfaces = e=>{
+	if(SNumInput.value === '' || SNumInput.checkValidity() === false) return undefined;
+	S = SNumInput.valueAsNumber;
+	SRangeInput.value = S;
+},
+YRangeInterfaces = e=>{
+	if(YRangeInput.checkValidity() === false) return undefined;
+	Y = YRangeInput.valueAsNumber;
+	YNumInput.value = Y;
+},
+YNormalInterfaces = e=>{
+	if(YNumInput.value === '' || YNumInput.checkValidity() === false) return undefined;
+	Y = YNumInput.valueAsNumber;
+	YRangeInput.value = Y;
+},
+updateSrgbByCode = ()=>{
+	Rs = colorCodeHexValue>>>16;
+	Gs = colorCodeHexValue>>>8 & 0x00ff;
+	Bs = colorCodeHexValue & 0x0000ff;
+	RsNormal = Rs/255;
+	GsNormal = Gs/255;
+	BsNormal = Bs/255;
+	RNumInput.value = Rs;
+	GNumInput.value = Gs;
+	BNumInput.value = Bs;
+	RRangeInput.value = RNormalNumInput.value = RsNormal;
+	GRangeInput.value = GNormalNumInput.value = GsNormal;
+	BRangeInput.value = BNormalNumInput.value = BsNormal;
+},
+updateCodeBySrgb = ()=>{
+	combinedHexCode = `${('0'+Math.round(Rs).toString(16)).slice(-2)}${('0'+Math.round(Gs).toString(16)).slice(-2)}${('0'+Math.round(Bs).toString(16)).slice(-2)}`;
+	colorPickInput.value = `#${combinedHexCode}`;
+	if(outputsLowerCase === false) {
+		if(prefixesColorCode === true) return colorCodeInput.value = `#${combinedHexCode.toUpperCase()}`;
+		return colorCodeInput.value = combinedHexCode.toUpperCase();
+	}
+	if(prefixesColorCode === true) return colorCodeInput.value = `#${combinedHexCode}`;
+	colorCodeInput.value = combinedHexCode;
+},
+updateCodeByNormalizedSrgb = ()=>{
+	combinedHexCode = `${('0'+Math.round(255*RsNormal).toString(16)).slice(-2)}${
+		('0'+Math.round(255*GsNormal).toString(16)).slice(-2)
+	}${('0'+Math.round(255*BsNormal).toString(16)).slice(-2)}`;
+	colorPickInput.value = `#${combinedHexCode}`;
+	if(outputsLowerCase === false) {
+		if(prefixesColorCode === true) return colorCodeInput.value = `#${combinedHexCode.toUpperCase()}`;
+		return colorCodeInput.value = combinedHexCode.toUpperCase();
+	}
+	if(prefixesColorCode === true) return colorCodeInput.value = `#${combinedHexCode}`;
+	colorCodeInput.value = combinedHexCode;
+},
+gammaExpand255xSrgbValue = v=>{
+	if(v <= 10.314300250662588) return v*5/16473;
+	return ((v*40 + 561)/10761)**2.4;
+},
+gammaExpandNormalizedSrgbValue = v=>{
+	if(v <= 0.040448236277108191) return v/12.92;
+	return ((v + 0.055)/1.055)**2.4;
+},
+gammaCompressLinearValueTo255x = v=>{
+	if(v <= 0.0031306684425006340) return v*16473/5;
+	return (v**(5/12)*10761 - 561)/40;
+},
+gammaCompressLinearValue = v=>{
+	if(v <= 0.0031306684425006340) return v*323/25;
+	return (v**(5/12)*211 - 11)/200;
+},
+calculatedegHFunctionsForMin = {
+	B: ()=> 60 + 60*(linearGNormal - linearRNormal)/linearDiff,
+	R: ()=> 180 + 60*(linearBNormal - linearGNormal)/linearDiff,
+	G: ()=> 300 + 60*(linearRNormal - linearBNormal)/linearDiff
+},
+calculateHFunctionsForMin = {
+	B: ()=> (1 + (linearGNormal - linearRNormal)/linearDiff)/6,
+	R: ()=> (3 + (linearBNormal - linearGNormal)/linearDiff)/6,
+	G: ()=> (5 + (linearRNormal - linearBNormal)/linearDiff)/6
+},
+updateLinearRgbBySrgb = ()=>{
+	linearRRangeInput.value = linearRNormalNumInput.value = linearRNormal = gammaExpand255xSrgbValue(Rs);
+	linearGRangeInput.value = linearGNormalNumInput.value = linearGNormal = gammaExpand255xSrgbValue(Gs);
+	linearBRangeInput.value = linearBNormalNumInput.value = linearBNormal = gammaExpand255xSrgbValue(Bs);
+	linearRNumInput.value = linearR = linearRNormal*255;
+	linearGNumInput.value = linearG = linearGNormal*255;
+	linearBNumInput.value = linearB = linearBNormal*255;
+},
+updateLinearRgbByNormalizedSrgb = ()=>{
+	linearRRangeInput.value = linearRNormalNumInput.value = linearRNormal = gammaExpandNormalizedSrgbValue(RsNormal);
+	linearGRangeInput.value = linearGNormalNumInput.value = linearGNormal = gammaExpandNormalizedSrgbValue(GsNormal);
+	linearBRangeInput.value = linearBNormalNumInput.value = linearBNormal = gammaExpandNormalizedSrgbValue(BsNormal);
+	linearRNumInput.value = linearR = linearRNormal*255;
+	linearGNumInput.value = linearG = linearGNormal*255;
+	linearBNumInput.value = linearB = linearBNormal*255;
+},
+updateHsyByLinearRgb = ()=>{
+	if(linearRNormal === linearGNormal && linearGNormal === linearBNormal) {
+		H = degH = null;
+		HRangeInput.value = 1;
+		degHNumInput.value = HNormalNumInput.value = '';
+		SNumInput.value = SRangeInput.value = S = 0;
+		return YNumInput.value = YRangeInput.value = (
+		Y = Kr*linearRNormal + Kg*linearGNormal + Kb*linearBNormal);
+	}
+	linearMax = Math.max(linearRNormal, linearGNormal, linearBNormal);
+	linearMin = Math.min(linearRNormal, linearGNormal, linearBNormal);
+	linearDiff = linearMax - linearMin;
+	if(linearMin === linearBNormal) {
+		HRangeInput.value = HNormalNumInput.value = H = calculateHFunctionsForMin.B();
+		degHNumInput.value = degH = calculatedegHFunctionsForMin.B();
+	} else if(linearMin === linearRNormal) {
+		HRangeInput.value = HNormalNumInput.value = H = calculateHFunctionsForMin.R();
+		degHNumInput.value = degH = calculatedegHFunctionsForMin.R();
+	} else{
+		HRangeInput.value = HNormalNumInput.value = H = calculateHFunctionsForMin.G();
+		degHNumInput.value = degH = calculatedegHFunctionsForMin.G();
+	}
+	SNumInput.value = SRangeInput.value = S = linearDiff/(1 - Math.abs(linearMax + linearMin - 1));
+	YNumInput.value = YRangeInput.value = Y = (
+		Kr*linearRNormal + Kg*linearGNormal +
+	Kb*linearBNormal);
+},
+syncColorCode = e=>{
+	if(e.target.checkValidity() === false) return undefined;
+	updateSrgbByCode();
+	updateLinearRgbBySrgb();
+	updateHsyByLinearRgb();
+},
+syncSrgb = e=>{
+	if(e.target.checkValidity() === false) return undefined;
+	updateCodeBySrgb();
+	updateLinearRgbBySrgb();
+	updateHsyByLinearRgb();
+},
+syncNormalizedSrgb = e=>{
+	if(e.target.checkValidity() === false) return undefined;
+	updateCodeByNormalizedSrgb();
+	updateLinearRgbByNormalizedSrgb();
+	updateHsyByLinearRgb();
+},
+updateSrgbByLinearRgb = ()=>{
+	RNumInput.value = Rs = gammaCompressLinearValueTo255x(linearRNormal);
+	GNumInput.value = Gs = gammaCompressLinearValueTo255x(linearGNormal);
+	BNumInput.value = Bs = gammaCompressLinearValueTo255x(linearBNormal);
+	RNormalNumInput.value = RRangeInput.value = RsNormal = gammaCompressLinearValue(linearRNormal);
+	GNormalNumInput.value = GRangeInput.value = GsNormal = gammaCompressLinearValue(linearGNormal);
+	BNormalNumInput.value = BRangeInput.value = BsNormal = gammaCompressLinearValue(linearBNormal);
+},
+syncLinearRgb = e=>{
+	if(e.target.checkValidity() === false) return undefined;
+	updateSrgbByLinearRgb();
+	updateCodeBySrgb();
+	updateHsyByLinearRgb();
+},
+HToPureYTmpD = [
+	/* pureY = (明度最大の原色の係数) + (明度中間の原色の係数)*(明度中間の原色の、純色での明度)
+	 * compoundness = 原色から色相がどれだけ離れているか。純色の間色度合い：0〜1
+	 * （未使用）tmpD = (明度中間の原色の、純色での明度) - pureY */
+	()=> {
+		pureLinearRNormal = 1;
+		compoundness = pureLinearGNormal = 6*H;
+		pureLinearBNormal = 0;
+		pureY = 0.21263900587151 + 4.2910120726066*H;
+		tmpD = 1.7089879273934*H - 0.21263900587151;
+	},
+	()=> {
+		compoundness = pureLinearRNormal = 2 - 6*H;
+		pureLinearGNormal = 1;
+		pureLinearBNormal = 0;
+		pureY = 1.1404466905108 - 1.2758340352291*H;
+		tmpD = 0.85955330948922 - 4.7241659647709*H;
+	},
+	()=> {
+		pureLinearRNormal = 0;
+		pureLinearGNormal = 1;
+		compoundness = pureLinearBNormal = 6*H - 2;
+		pureY = 0.5707840480463 + 0.4331538921644*H;
+		tmpD = 5.5668461078356*H - 2.5707840480463;
+	},
+	()=> {
+		pureLinearRNormal = 0;
+		compoundness = pureLinearGNormal = 4 - 6*H;
+		pureLinearBNormal = 1;
+		pureY = 2.93286703043177 - 4.2910120726066*H;
+		tmpD = 1.06713296956823 - 1.7089879273934*H;
+	},
+	()=> {
+		compoundness = pureLinearRNormal = 6*H - 4;
+		pureLinearGNormal = 0;
+		pureLinearBNormal = 1;
+		pureY = 1.2758340352291*H - 0.77836370812531;
+		tmpD = 4.7241659647709*H - 3.22163629187469;
+	},
+	()=> {
+		pureLinearRNormal = 1;
+		pureLinearGNormal = 0;
+		compoundness = pureLinearBNormal = 6 - 6*H;
+		pureY = 0.64579289803589 - 0.4331538921644*H;
+		tmpD = 5.35420710196411 - 5.5668461078356*H;
+	}
+],
+degHToPureYTmpD = [
+	/* pureY = (明度最大の原色の係数) + (明度中間の原色の係数)*(明度中間の原色の、純色での明度)
+	 * （未使用）tmpD = (明度中間の原色の、純色での明度) - pureY */
+	()=> {
+		pureLinearRNormal = 1;
+		compoundness = pureLinearGNormal = degH/60;
+		pureLinearBNormal = 0;
+		pureY = 0.21263900587151 + 0.71516867876776*degH/60;
+		tmpD = 0.28483132123224*degH/60 - 0.21263900587151;
+	},
+	()=> {
+		compoundness = pureLinearRNormal = 2 - degH/60;
+		pureLinearGNormal = 1;
+		pureLinearBNormal = 0;
+		pureY = 1.14044669051078 - 0.21263900587151*degH/60;
+		tmpD = 0.85955330948922 - 0.78736099412849*degH/60;
+	},
+	()=> {
+		pureLinearRNormal = 0;
+		pureLinearGNormal = 1;
+		compoundness = pureLinearBNormal = degH/60 - 2;
+		pureY = 0.5707840480463 + 0.07219231536073*degH/60;
+		tmpD = 0.92780768463927*degH/60 - 2.5707840480463;
+	},
+	()=> {
+		pureLinearRNormal = 0;
+		compoundness = pureLinearGNormal = 4 - degH/60;
+		pureLinearBNormal = 1;
+		pureY = 2.93286703043177 - 0.71516867876776*degH/60;
+		tmpD = 1.06713296956823 - 0.28483132123224*degH/60;
+	},
+	()=> {
+		compoundness = pureLinearRNormal = degH/60 - 4;
+		pureLinearGNormal = 0;
+		pureLinearBNormal = 1;
+		pureY = 0.21263900587151*degH/60 - 0.77836370812531;
+		tmpD = 0.78736099412849*degH/60 - 3.22163629187469;
+	},
+	()=> {
+		pureLinearRNormal = 1;
+		pureLinearGNormal = 0;
+		compoundness = pureLinearBNormal = 6 - degH/60;
+		pureY = 0.64579289803589 - 0.07219231536073*degH/60;
+		tmpD = 5.35420710196411 - 0.92780768463927*degH/60;
+	}
+],
+calculationsMaxBySYPureY = new Map([
+	[false, ()=>{
+		linearMax = (Y + (1 - Y)*S)*Y/pureY;
+	}],
+	[true, ()=>{
+		linearMax = 1 - (1 - S)*(1 - Y)*(1 - Y)/(1 - pureY);
+	}]
+]),
+calculationsMidBySYPureYTmpD = new Map([
+	[false, ()=>{
+		linearMid = ((1 - S)*Y + compoundness*S)*Y/pureY;
+	}],
+	[true, ()=>{
+		linearMid = 1 + ((compoundness - Y)*S - (1 - Y))*(1 - Y)/(1 - pureY);
+	}]
+]),
+calculationsMinBySYPureY = new Map([
+	[false, ()=>{
+		linearMin = (1 - S)*Y * Y/pureY;
+	}],
+	[true, ()=>{
+		linearMin = 1 - ((1 - Y) + Y*S)*(1 - Y)/(1 - pureY);
+	}]
+]),
+updateLinearRgbByHsy = ()=>{
+	if(H === null) {
+		linearR = linearG = linearB = linearRNumInput.value = linearGNumInput.value = linearBNumInput.value = 255*Y;
+		linearRNormal = linearGNormal = linearBNormal = linearRRangeInput.value = linearGRangeInput.value = linearBRangeInput.value = (
+			linearRNormalNumInput.value = linearGNormalNumInput.value = linearBNormalNumInput.value = Y
+		);
+		return undefined;
+	}
+	if(degHHasPriority === true) {
+		if(degH < 180) {
+			if(degH < 60) {
+				degHToPureYTmpD[0]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMax;
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMid;
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMin;
+			} else if(degH < 120) {
+				degHToPureYTmpD[1]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMax;
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMid;
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMin;
+			} else{
+				degHToPureYTmpD[2]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMax;
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMid;
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMin;
+			}
+		} else{
+			if(degH < 240) {
+				degHToPureYTmpD[3]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMax;
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMid;
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMin;
+			} else if(degH < 300) {
+				degHToPureYTmpD[4]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMax;
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMid;
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMin;
+			} else{
+				degHToPureYTmpD[5]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMax;
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMid;
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMin;
+			}
+		}
+	} else{
+		if(H < 0.5) {
+			if(H <= 0.16666666666666666) {
+				HToPureYTmpD[0]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMax;
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMid;
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMin;
+			} else if(H <= 0.3333333333333333) {
+				HToPureYTmpD[1]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMax;
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMid;
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMin;
+			} else{
+				HToPureYTmpD[2]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMax;
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMid;
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMin;
+			}
+		} else{
+			if(H <= 0.6666666666666666) {
+				HToPureYTmpD[3]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMax;
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMid;
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMin;
+			} else if(H < 0.8333333333333334) {
+				HToPureYTmpD[4]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMax;
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMid;
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMin;
+			} else{
+				HToPureYTmpD[5]();
+				isYOverPureY = Y > pureY;
+				calculationsMaxBySYPureY.get(isYOverPureY)();
+				calculationsMidBySYPureYTmpD.get(isYOverPureY)();
+				calculationsMinBySYPureY.get(isYOverPureY)();
+				linearRNormal = linearRRangeInput.value = linearRNormalNumInput.value = linearMax;
+				linearBNormal = linearBRangeInput.value = linearBNormalNumInput.value = linearMid;
+				linearGNormal = linearGRangeInput.value = linearGNormalNumInput.value = linearMin;
+			}
+		}
+	}
+	linearR = linearRNumInput.value = 255*linearRNormal;
+	linearG = linearGNumInput.value = 255*linearGNormal;
+	linearB = linearBNumInput.value = 255*linearBNormal;
+},
+syncHsy = e=>{
+	if(e.target.checkValidity() === false) return undefined;
+	updateLinearRgbByHsy();
+	updateSrgbByLinearRgb();
+	updateCodeBySrgb();
+};
+
+let shouldSync = true, outputsLowerCase = false, prefixesColorCode = false,
+colorCodeHexValue = 0xbcbcbc,
+combinedHexCode = 'BCBCBC',
+separatedHexCode = [0xbc, 0xbc, 0xbc],
+Rs = 188, Gs = 188, Bs = 188,
+RsNormal = 0.7372549019607844, GsNormal = 0.7372549019607844, BsNormal = 0.7372549019607844,
+linearR = 128.23604679830493, linearG = 128.23604679830493, linearB = 128.23604679830493,
+linearRNormal = 0.5028864580325684, linearGNormal = 0.5028864580325684, linearBNormal = 0.5028864580325684,
+linearMax = 0.5028864580325684, linearMid = 0.5028864580325684, linearMin = 0.5028864580325684, linearDiff = 0,
+H = null, degH = null, degHHasPriority = false,
+S = 0, Y = 0.5028864580325684, pureY, isYOverPureY, compoundness, tmpD,
+pureLinearRNormal, pureLinearGNormal, pureLinearBNormal;
+
+form.addEventListener('submit', e=>{
+	e.preventDefault();
+}, {passive: false});
+
+addAsyncListener(syncGovernorBox, toggleSyncMode, 'change');
+addAsyncListener(colorPickInput, colorPickInterfaces);
+addAsyncListener(colorCodeInput, colorCodeInterfaces);
+addAsyncListener(caseGovernorBox, toggleCaseMode, 'change');
+addAsyncListener(prefixGovernorBox, togglePrefixMode, 'change');
+addAsyncListener(RNumInput, RNumInterfaces);
+addAsyncListener(RRangeInput, RRangeInterfaces);
+addAsyncListener(RNormalNumInput, RNormalInterfaces);
+addAsyncListener(GNumInput, GNumInterfaces);
+addAsyncListener(GRangeInput, GRangeInterfaces);
+addAsyncListener(GNormalNumInput, GNormalInterfaces);
+addAsyncListener(BNumInput, BNumInterfaces);
+addAsyncListener(BRangeInput, BRangeInterfaces);
+addAsyncListener(BNormalNumInput, BNormalInterfaces);
+addAsyncListener(linearRNumInput, linearRNumInterfaces);
+addAsyncListener(linearRRangeInput, linearRRangeInterfaces);
+addAsyncListener(linearRNormalNumInput, linearRNormalInterfaces);
+addAsyncListener(linearGNumInput, linearGNumInterfaces);
+addAsyncListener(linearGRangeInput, linearGRangeInterfaces);
+addAsyncListener(linearGNormalNumInput, linearGNormalInterfaces);
+addAsyncListener(linearBNumInput, linearBNumInterfaces);
+addAsyncListener(linearBRangeInput, linearBRangeInterfaces);
+addAsyncListener(linearBNormalNumInput, linearBNormalInterfaces);
+addAsyncListener(degHNumInput, degHInterfaces);
+addAsyncListener(HRangeInput, HRangeInterfaces);
+addAsyncListener(HNormalNumInput, HNormalInterfaces);
+addAsyncListener(YRangeInput, YRangeInterfaces);
+addAsyncListener(YNumInput, YNormalInterfaces);
+addAsyncListener(SRangeInput, SRangeInterfaces);
+addAsyncListener(SNumInput, SNormalInterfaces);
+addSyncCouldListener(colorPickInput, syncColorCode);
+addSyncCouldListener(colorCodeInput, syncColorCode);
+colorPickInput.addEventListener('change', syncColorCode, eventOptions);
+colorCodeInput.addEventListener('change', syncColorCode, eventOptions);
+addSyncCouldListener(RNumInput, syncSrgb);
+addSyncCouldListener(GNumInput, syncSrgb);
+addSyncCouldListener(BNumInput, syncSrgb);
+RNumInput.addEventListener('change', syncSrgb, eventOptions);
+GNumInput.addEventListener('change', syncSrgb, eventOptions);
+BNumInput.addEventListener('change', syncSrgb, eventOptions);
+addSyncCouldListener(RRangeInput, syncNormalizedSrgb);
+addSyncCouldListener(GRangeInput, syncNormalizedSrgb);
+addSyncCouldListener(BRangeInput, syncNormalizedSrgb);
+RRangeInput.addEventListener('change', syncNormalizedSrgb, eventOptions);
+GRangeInput.addEventListener('change', syncNormalizedSrgb, eventOptions);
+BRangeInput.addEventListener('change', syncNormalizedSrgb, eventOptions);
+addSyncCouldListener(RNormalNumInput, syncNormalizedSrgb);
+addSyncCouldListener(GNormalNumInput, syncNormalizedSrgb);
+addSyncCouldListener(BNormalNumInput, syncNormalizedSrgb);
+RNormalNumInput.addEventListener('change', syncNormalizedSrgb, eventOptions);
+GNormalNumInput.addEventListener('change', syncNormalizedSrgb, eventOptions);
+BNormalNumInput.addEventListener('change', syncNormalizedSrgb, eventOptions);
+addSyncCouldListener(linearRNumInput, syncLinearRgb);
+addSyncCouldListener(linearGNumInput, syncLinearRgb);
+addSyncCouldListener(linearBNumInput, syncLinearRgb);
+linearRNumInput.addEventListener('change', syncLinearRgb, eventOptions);
+linearGNumInput.addEventListener('change', syncLinearRgb, eventOptions);
+linearBNumInput.addEventListener('change', syncLinearRgb, eventOptions);
+addSyncCouldListener(linearRRangeInput, syncLinearRgb);
+addSyncCouldListener(linearGRangeInput, syncLinearRgb);
+addSyncCouldListener(linearBRangeInput, syncLinearRgb);
+linearRRangeInput.addEventListener('change', syncLinearRgb, eventOptions);
+linearGRangeInput.addEventListener('change', syncLinearRgb, eventOptions);
+linearBRangeInput.addEventListener('change', syncLinearRgb, eventOptions);
+addSyncCouldListener(linearRNormalNumInput, syncLinearRgb);
+addSyncCouldListener(linearGNormalNumInput, syncLinearRgb);
+addSyncCouldListener(linearBNormalNumInput, syncLinearRgb);
+linearRNormalNumInput.addEventListener('change', syncLinearRgb, eventOptions);
+linearGNormalNumInput.addEventListener('change', syncLinearRgb, eventOptions);
+linearBNormalNumInput.addEventListener('change', syncLinearRgb, eventOptions);
+addSyncCouldListener(degHNumInput, syncHsy);
+degHNumInput.addEventListener('change', syncHsy, eventOptions);
+addSyncCouldListener(HRangeInput, syncHsy);
+addSyncCouldListener(SRangeInput, syncHsy);
+addSyncCouldListener(YRangeInput, syncHsy);
+HRangeInput.addEventListener('change', syncHsy, eventOptions);
+SRangeInput.addEventListener('change', syncHsy, eventOptions);
+YRangeInput.addEventListener('change', syncHsy, eventOptions);
+addSyncCouldListener(HNormalNumInput, syncHsy);
+addSyncCouldListener(SNumInput, syncHsy);
+addSyncCouldListener(YNumInput, syncHsy);
+HNormalNumInput.addEventListener('change', syncHsy, eventOptions);
+SNumInput.addEventListener('change', syncHsy, eventOptions);
+YNumInput.addEventListener('change', syncHsy, eventOptions);
+
+
+})();
+
+/*]]>*/
+	</script>
+	
+</body>
+</html>
